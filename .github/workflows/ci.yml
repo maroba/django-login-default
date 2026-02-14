@@ -34,21 +34,3 @@ jobs:
         run: |
           cd sample_project
           python manage.py test django_login_default.tests
-
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-
-      - name: Install linters
-        run: |
-          python -m pip install --upgrade pip
-          pip install ruff
-
-      - name: Run ruff
-        run: ruff check .

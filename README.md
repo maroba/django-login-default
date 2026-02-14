@@ -1,5 +1,7 @@
 # django-login-default
 
+[![PyPI version](https://img.shields.io/pypi/v/django-login-default.svg)](https://pypi.org/project/django-login-default/)
+
 A Django middleware that makes login required the default. Instead of decorating
 every view with `@login_required`, you add one middleware and then mark the
 exceptions — the views that should be public.

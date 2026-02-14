@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard – django-login-default{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'django_login_default:index' %}">Home</a></li>
+            <li class="breadcrumb-item active">Dashboard</li>
+        </ol>
+    </nav>
+
+    <h1 class="mb-3">Dashboard</h1>
+
+    <div class="alert alert-success">
+        You're logged in as <strong>{{ user.username }}</strong>.
+        This page is only visible to authenticated users.
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-lg-8">
+            <h5>Why is this page protected?</h5>
+            <p>
+                <code>DashboardView</code> is a plain <code>TemplateView</code> &mdash; it
+                doesn't use <code>NoLoginRequiredMixin</code> or <code>@no_login_required</code>.
+                With the middleware active, that's all it takes to require login.
+            </p>
+<pre><code>class DashboardView(TemplateView):
+    template_name = "django_login_default/dashboard.html"</code></pre>
+            <p class="text-muted mt-3">
+                If you log out and try to come back here, you'll be redirected to the login
+                page with <code>?next=/dashboard/</code> so you end up right back after logging in.
+            </p>
+
+            <div class="mt-4">
+                <a href="{% url 'django_login_default:public' %}" class="btn btn-outline-dark btn-sm me-2">
+                    Visit Public Page &rarr;
+                </a>
+                <form method="post" action="{% url 'logout' %}" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-outline-secondary btn-sm">
+                        Log out &amp; try again
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

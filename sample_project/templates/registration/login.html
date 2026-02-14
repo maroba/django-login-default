@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}Log in – django-login-default{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-sm-8 col-md-5 col-lg-4">
+
+            <h2 class="mb-4">Log in</h2>
+
+            {% if form.errors %}
+            <div class="alert alert-danger">
+                Invalid username or password.
+            </div>
+            {% endif %}
+
+            {% if next %}
+            <div class="alert alert-warning">
+                You need to log in to view that page.
+            </div>
+            {% endif %}
+
+            <form method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="id_username" class="form-label">Username</label>
+                    <input type="text" name="username" id="id_username"
+                           class="form-control" autofocus>
+                </div>
+                <div class="mb-3">
+                    <label for="id_password" class="form-label">Password</label>
+                    <input type="password" name="password" id="id_password"
+                           class="form-control">
+                </div>
+                <input type="hidden" name="next" value="{{ next }}">
+                <button type="submit" class="btn btn-primary w-100">Log in</button>
+            </form>
+
+            <p class="text-muted text-center mt-4 small">
+                Demo credentials: <code>admin</code> / <code>admin</code>
+            </p>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

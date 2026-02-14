@@ -1,0 +1,2 @@
+# Install the reusable app in editable mode
+-e ..

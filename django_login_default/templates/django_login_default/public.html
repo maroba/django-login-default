@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}Public Page – django-login-default{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'django_login_default:index' %}">Home</a></li>
+            <li class="breadcrumb-item active">Public Page</li>
+        </ol>
+    </nav>
+
+    <h1 class="mb-3">Public Page</h1>
+
+    <div class="alert alert-info">
+        {% if user.is_authenticated %}
+            You're logged in as <strong>{{ user.username }}</strong>, but this page
+            doesn't require it.
+        {% else %}
+            You're <strong>not logged in</strong> &mdash; and this page works anyway.
+        {% endif %}
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-lg-8">
+            <h5>How does this page opt out?</h5>
+            <p>
+                The view uses <code>NoLoginRequiredMixin</code>, which sets
+                <code>no_login_required = True</code> on the class. The middleware sees that
+                and lets the request through.
+            </p>
+
+            <p><strong>Class-based view:</strong></p>
+<pre><code>from django_login_default.mixins import NoLoginRequiredMixin
+
+class PublicView(NoLoginRequiredMixin, TemplateView):
+    template_name = "public.html"</code></pre>
+
+            <p class="mt-3"><strong>Function-based view:</strong></p>
+<pre><code>from django_login_default.decorators import no_login_required
+
+@no_login_required
+def public_page(request):
+    return render(request, "public.html")</code></pre>
+
+            <p class="text-muted mt-3">
+                Both approaches do the same thing &mdash; they set an attribute that the
+                middleware checks before deciding whether to redirect.
+            </p>
+
+            <div class="mt-4">
+                {% if user.is_authenticated %}
+                    <form method="post" action="{% url 'logout' %}" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-secondary btn-sm me-2">
+                            Log out
+                        </button>
+                    </form>
+                {% endif %}
+                <a href="{% url 'django_login_default:dashboard' %}" class="btn btn-outline-dark btn-sm">
+                    Try the Dashboard (protected) &rarr;
+                </a>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

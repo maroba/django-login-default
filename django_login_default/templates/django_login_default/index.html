@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+
+{% block title %}django-login-default – Demo{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+
+    <div class="mb-5">
+        <h1 class="mb-2"><code>django-login-default</code></h1>
+        <p class="lead text-muted">
+            A middleware that makes login required by default &mdash; and lets you opt out per view.
+        </p>
+        <hr>
+    </div>
+
+    <!-- What's the idea -->
+    <div class="row mb-5">
+        <div class="col-lg-8">
+            <h2>The idea</h2>
+            <p>
+                Instead of adding <code>LoginRequiredMixin</code> or <code>@login_required</code>
+                to every single view, this middleware flips the default: <strong>everything
+                requires login</strong>, and you mark the exceptions.
+            </p>
+            <p>It ships three things:</p>
+            <ol>
+                <li>
+                    <code>LoginRequiredMiddleware</code> &mdash; intercepts unauthenticated
+                    requests and redirects to <code>settings.LOGIN_URL</code>.
+                </li>
+                <li>
+                    <code>@no_login_required</code> &mdash; decorator for function-based
+                    views that should stay public.
+                </li>
+                <li>
+                    <code>NoLoginRequiredMixin</code> &mdash; the same thing, but for
+                    class-based views.
+                </li>
+            </ol>
+        </div>
+    </div>
+
+    <!-- Setup -->
+    <div class="row mb-5">
+        <div class="col-lg-8">
+            <h2>Setup</h2>
+            <p>
+                Add the middleware to your <code>settings.py</code>, <strong>after</strong>
+                <code>AuthenticationMiddleware</code>:
+            </p>
+<pre><code>MIDDLEWARE = [
+    ...
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django_login_default.middleware.LoginRequiredMiddleware",
+    ...
+]
+
+LOGIN_URL = "/accounts/login/"</code></pre>
+
+            <p class="mt-4">Then mark any view that should be publicly accessible:</p>
+<pre><code># Function-based view
+from django_login_default.decorators import no_login_required
+
+@no_login_required
+def public_page(request):
+    ...
+
+# Class-based view
+from django_login_default.mixins import NoLoginRequiredMixin
+
+class PublicPage(NoLoginRequiredMixin, TemplateView):
+    template_name = "public.html"</code></pre>
+
+            <p class="mt-3 text-muted">
+                That's it. Every other view is now behind login automatically.
+            </p>
+        </div>
+    </div>
+
+    <!-- Try it -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2>Try it</h2>
+            <p>
+                This sample project has two pages you can visit to see the middleware in action.
+                {% if not user.is_authenticated %}
+                    You're currently <strong>not logged in</strong> &mdash;
+                    credentials are <code>admin</code> / <code>admin</code>.
+                {% else %}
+                    You're logged in as <strong>{{ user.username }}</strong>.
+                {% endif %}
+            </p>
+        </div>
+    </div>
+
+    <div class="row mb-5">
+        <div class="col-md-6 mb-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5>
+                        <span class="badge text-bg-danger me-1">protected</span>
+                        Dashboard
+                    </h5>
+                    <p class="card-text text-muted">
+                        A regular <code>TemplateView</code> with no special markup.
+                        The middleware catches unauthenticated requests and sends you to login.
+                    </p>
+                    <a href="{% url 'django_login_default:dashboard' %}" class="btn btn-sm btn-outline-dark">
+                        Go to Dashboard &rarr;
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5>
+                        <span class="badge text-bg-success me-1">public</span>
+                        Public Page
+                    </h5>
+                    <p class="card-text text-muted">
+                        Uses <code>NoLoginRequiredMixin</code> to opt out. Anyone can see it,
+                        logged in or not.
+                    </p>
+                    <a href="{% url 'django_login_default:public' %}" class="btn btn-sm btn-outline-dark">
+                        Go to Public Page &rarr;
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
